@@ -48,6 +48,8 @@ class BertClassifier(nn.Module):
         # Encoder.
         if not self.use_vm:
             vm = None
+        
+#        import pdb;pdb.set_trace()
         output = self.encoder(emb, mask, vm)
         # Target.
         if self.pooling == "mean":
@@ -143,7 +145,7 @@ def add_knowledge_worker(params):
     return dataset
 
 
-def main():
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     # Path options.
@@ -249,18 +251,20 @@ def main():
     # Build bert model.
     # A pseudo target is added.
     args.target = "bert"
+    
     model = build_model(args)
 
     # Load or initialize parameters.
-    if args.pretrained_model_path is not None:
-        # Initialize with pretrained model.
-        model.load_state_dict(torch.load(args.pretrained_model_path), strict=False)  
-    else:
-        # Initialize with normal distribution.
-        for n, p in list(model.named_parameters()):
-            if 'gamma' not in n and 'beta' not in n:
-                p.data.normal_(0, 0.02)
-    
+#    if args.pretrained_model_path is not None:
+#        # Initialize with pretrained model.
+#        import pdb;pdb.set_trace()
+#        model.load_state_dict(torch.load(args.pretrained_model_path), strict=False)  
+#    else:
+#        # Initialize with normal distribution.
+#        for n, p in list(model.named_parameters()):
+#            if 'gamma' not in n and 'beta' not in n:
+#                p.data.normal_(0, 0.02)
+#    
     # Build classification model.
     model = BertClassifier(args, model)
 
@@ -271,6 +275,7 @@ def main():
         model = nn.DataParallel(model)
 
     model = model.to(device)
+#    import pdb;pdb.set_trace()
     
     # Datset loader.
     def batch_loader(batch_size, input_ids, label_ids, mask_ids, pos_ids, vms):
@@ -296,6 +301,7 @@ def main():
         spo_files = []
     else:
         spo_files = [args.kg_name]
+        
     kg = KnowledgeGraph(spo_files=spo_files, predicate=True)
 
     def read_dataset(path, workers_num=1):
@@ -574,5 +580,3 @@ def main():
     evaluate(args, True)
 
 
-if __name__ == "__main__":
-    main()

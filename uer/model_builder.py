@@ -20,6 +20,7 @@ from uer.subencoders.rnn_subencoder import LstmSubencoder
 from uer.subencoders.cnn_subencoder import CnnSubencoder
 from uer.models.model import Model
 
+from transformers import AutoModel
 
 def build_model(args):
     """
@@ -38,6 +39,9 @@ def build_model(args):
     embedding = BertEmbedding(args, len(args.vocab))
     encoder = globals()[args.encoder.capitalize() + "Encoder"](args)
     target = globals()[args.target.capitalize() + "Target"](args, len(args.vocab))
+    
+#    bert = AutoModel.from_pretrained(args.pretrained_model_path)
+#    import pdb;pdb.set_trace()
     model = Model(args, embedding, encoder, target, subencoder)
 
     return model

@@ -19,21 +19,21 @@ class Model(nn.Module):
         self.target = target
         
         # Subencoder.
-        if subencoder is not None:
-            self.vocab, self.sub_vocab = args.vocab, args.sub_vocab
-            self.subword_type = args.subword_type
-            self.subencoder = subencoder
-        else:
-            self.subencoder = None
+#        if subencoder is not None:
+##            self.vocab, self.sub_vocab = args.vocab, args.sub_vocab
+#            self.subword_type = args.subword_type
+#            self.subencoder = subencoder
+#        else:
+#            self.subencoder = None
 
     def forward(self, src, tgt, seg, pos=None, vm=None):
         # [batch_size, seq_length, emb_size]
 
         emb = self.embedding(src, seg, pos) 
 
-        if self.subencoder is not None:
-            sub_ids = word2sub(src, self.vocab, self.sub_vocab, self.subword_type)
-            emb = emb + self.subencoder(sub_ids).contiguous().view(*emb.size())
+#        if self.subencoder is not None:
+#            sub_ids = word2sub(src, self.vocab, self.sub_vocab, self.subword_type)
+#            emb = emb + self.subencoder(sub_ids).contiguous().view(*emb.size())
 
         output = self.encoder(emb, seg, vm)            
 
